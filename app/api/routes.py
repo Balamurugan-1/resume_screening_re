@@ -2,6 +2,12 @@ from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.utils.resume_parser import extract_text_from_pdf, extract_text_from_docx
 from app.utils.text_cleaner import clean_text
 from app.schemas.request import JDInput
+from app.services.embedding_service import get_embedding
+from app.utils.similarity import cosine_similarity
+from app.schemas.request import JDInput
+from pydantic import BaseModel
+import traceback
+
 
 router = APIRouter()
 
@@ -35,3 +41,24 @@ async def parse_jd(jd: JDInput):
     return {
         "cleaned_jd_text": cleaned_jd
     }
+
+
+
+class SimilarityRequest(BaseModel):
+    resume_text: str
+    job_description: str
+@router.post("/score")
+async def score_resume(payload: SimilarityRequest):
+    try:
+        resume_embedding = get_embedding(payload.resume_text)
+        jd_embedding = get_embedding(payload.job_description)
+
+        score = cosine_similarity(resume_embedding, jd_embedding)
+
+        return {
+            "similarity_score": round(score * 100, 2)
+        }
+
+    except Exception as e:
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
