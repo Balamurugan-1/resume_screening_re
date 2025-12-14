@@ -1,5 +1,5 @@
 def resume_text_to_latex(resume_text: str) -> str:
-    def escape_latex(text):
+    def escape_latex(text: str) -> str:
         replacements = {
             "&": r"\&",
             "%": r"\%",
@@ -18,6 +18,8 @@ def resume_text_to_latex(resume_text: str) -> str:
 
     escaped = escape_latex(resume_text)
 
+    latex_body = escaped.replace("\n", r"\\")
+
     latex = f"""
 \\documentclass[11pt]{{article}}
 \\usepackage[a4paper,margin=1in]{{geometry}}
@@ -26,7 +28,7 @@ def resume_text_to_latex(resume_text: str) -> str:
 
 \\begin{{document}}
 
-{escaped.replace("\\n", "\\\\")}
+{latex_body}
 
 \\end{{document}}
 """.strip()
