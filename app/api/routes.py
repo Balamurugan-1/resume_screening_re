@@ -11,6 +11,7 @@ from app.services.resume_improver import improve_resume
 from app.services.embedding_service import get_embedding
 from app.utils.similarity import cosine_similarity
 from pydantic import BaseModel
+from app.utils.latex_formatter import resume_text_to_latex
 
 
 router = APIRouter()
@@ -78,17 +79,17 @@ async def improve_resume_endpoint(payload: ImproveRequest):
         get_embedding(payload.job_description)
     )
 
-    # improve resume
     improvement = improve_resume(
         payload.resume_text,
         payload.job_description
     )
 
-
     improved_score = cosine_similarity(
         get_embedding(improvement.improved_resume_text),
         get_embedding(payload.job_description)
     )
+
+    latex_code = resume_text_to_latex(improvement.improved_resume_text)
 
     return {
         "original_score": round(original_score * 100, 2),
@@ -96,6 +97,6 @@ async def improve_resume_endpoint(payload: ImproveRequest):
         "score_delta": round((improved_score - original_score) * 100, 2),
         "missing_skills": improvement.missing_skills,
         "suggestions": improvement.improvement_suggestions,
-        "improved_resume": improvement.improved_resume_text
+        "improved_resume": improvement.improved_resume_text,
+        "latex_resume": latex_code
     }
-
