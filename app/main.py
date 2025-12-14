@@ -3,10 +3,22 @@ from app.api.routes import router
 from app.core.config import APP_NAME
 from fastapi.responses import JSONResponse
 from fastapi import Request
+from fastapi.middleware.cors import CORSMiddleware
 import time
 
 app = FastAPI(title=APP_NAME)
 app.include_router(router)
+
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # for development
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.get("/")
 def root():
