@@ -9,3 +9,4 @@ google-generativeai
 numpy
 motor
 passlib[argon2]
+python-jose[cryptography]
