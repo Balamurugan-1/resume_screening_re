@@ -5,9 +5,14 @@ from fastapi.responses import JSONResponse
 from fastapi import Request
 from fastapi.middleware.cors import CORSMiddleware
 import time
+from app.api.auth.routes import router as auth_router
+
+
 
 app = FastAPI(title=APP_NAME)
 app.include_router(router)
+app.include_router(auth_router)
+
 
 
 

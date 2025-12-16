@@ -7,3 +7,5 @@ python-docx
 python-multipart
 google-generativeai
 numpy
+motor
+passlib[argon2]

@@ -12,6 +12,7 @@ from app.services.embedding_service import get_embedding
 from app.utils.similarity import cosine_similarity
 from pydantic import BaseModel
 from app.utils.latex_formatter import resume_text_to_latex
+from app.db.mongo import db
 
 
 router = APIRouter()
@@ -99,4 +100,13 @@ async def improve_resume_endpoint(payload: ImproveRequest):
         "suggestions": improvement.improvement_suggestions,
         "improved_resume": improvement.improved_resume_text,
         "latex_resume": latex_code
+    }
+
+
+@router.get("/db-test")
+async def db_test():
+    collections = await db.list_collection_names()
+    return {
+        "status": "connected",
+        "collections": collections
     }
